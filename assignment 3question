@@ -1,0 +1,107 @@
+#include <stdio.h>
+
+int main()
+{
+    int id[40], prev[40], curr[40];
+    int usage[40], rank[40];
+    int n = 0, rows, cols;
+    int i, j, k, duplicate, temp;
+
+    printf("Enter number of rows (max 8): ");
+    scanf("%d", &rows);
+
+    if (rows < 0 || rows > 8)
+    {
+        printf("Invalid number of rows");
+        return 0;
+    }
+
+    for (i = 0; i < rows && n < 40; i++)
+    {
+        printf("Enter number of records in row %d: ", i + 1);
+        scanf("%d", &cols);
+
+        if (cols < 0 || cols > 8)
+        {
+            printf("Invalid row size");
+            return 0;
+        }
+
+        if (cols == 0)
+            printf("Row %d is empty\n", i + 1);
+
+        for (j = 0; j < cols && n < 40; j++)
+        {
+            int cid, p, c;
+
+            printf("Enter ID, previous and current reading: ");
+            scanf("%d%d%d", &cid, &p, &c);
+
+            duplicate = 0;
+
+            for (k = 0; k < n; k++)
+            {
+                if (id[k] == cid)
+                    duplicate = 1;
+            }
+
+            if (duplicate)
+            {
+                printf("Duplicate ID rejected\n");
+                continue;
+            }
+
+            if (cid < 0 || p < 0 || c < p)
+            {
+                printf("Invalid record rejected\n");
+                continue;
+            }
+
+            id[n] = cid;
+            prev[n] = p;
+            curr[n] = c;
+            usage[n] = c - p;
+
+            if (usage[n] > 0)
+                rank[n] = n;
+            else
+                rank[n] = -1;
+
+            n++;
+        }
+    }
+
+    /* Sort positive usage using index array */
+    for (i = 0; i < n; i++)
+    {
+        for (j = i + 1; j < n; j++)
+        {
+            if (rank[i] != -1 && rank[j] != -1 &&
+                usage[rank[i]] < usage[rank[j]])
+            {
+                temp = rank[i];
+                rank[i] = rank[j];
+                rank[j] = temp;
+            }
+            else if (rank[i] == -1 && rank[j] != -1)
+            {
+                temp = rank[i];
+                rank[i] = rank[j];
+                rank[j] = temp;
+            }
+        }
+    }
+
+    printf("\nCustomer Usage Ranking\n");
+
+    for (i = 0; i < n; i++)
+    {
+        if (rank[i] != -1)
+            printf("ID: %d  Usage: %d\n",
+                   id[rank[i]], usage[rank[i]]);
+    }
+
+    printf("\nTotal valid customers: %d", n);
+
+    return 0;
+}
