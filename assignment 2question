@@ -1,0 +1,73 @@
+#include <stdio.h>
+
+int main()
+{
+    int id, opening, closing, eligible;
+    int count = 0, limit = 100;
+    double units, energy, bill, total = 0;
+
+    while (count < limit)
+    {
+        printf("\nEnter customer ID: ");
+
+        if (scanf("%d", &id) != 1)
+        {
+            printf("Invalid ID input");
+            break;
+        }
+
+        if (id == -9999)
+            break;
+
+        printf("Enter opening and closing readings: ");
+        if (scanf("%d%d", &opening, &closing) != 2)
+        {
+            printf("Invalid reading input");
+            break;
+        }
+
+        printf("Enter eligibility (1-Yes, 0-No): ");
+        if (scanf("%d", &eligible) != 1)
+            break;
+
+        if (opening < 0 || closing < 0 ||
+            closing < opening ||
+            (eligible != 0 && eligible != 1))
+        {
+            printf("Invalid record. Rejected.\n");
+            continue;
+        }
+
+        units = closing - opening;
+
+        if (units <= 100)
+            energy = units * 3;
+        else if (units <= 200)
+            energy = 100 * 3 + (units - 100) * 5;
+        else
+            energy = 100 * 3 + 100 * 5 +
+                     (units - 200) * 7;
+
+        bill = energy;
+
+        if (eligible == 1)
+            bill = bill - (bill * 0.10);
+
+        bill = bill + 50;
+
+        printf("Customer ID: %d\n", id);
+        printf("Units consumed: %.2f\n", units);
+        printf("Total bill: Rs. %.2f\n", bill);
+
+        total = total + bill;
+        count++;
+    }
+
+    printf("\nValid records: %d", count);
+    printf("\nGrand total: Rs. %.2f", total);
+
+    if (count == limit)
+        printf("\nInput limit reached.");
+
+    return 0;
+}
