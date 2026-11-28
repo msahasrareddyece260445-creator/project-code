@@ -1,0 +1,104 @@
+#include <stdio.h>
+
+#define SUCCESS 0
+#define INVALID_READING 1
+#define INVALID_POINTER 2
+
+int calculateUsage(int opening, int closing, double *usage)
+{
+    if (usage == NULL)
+        return INVALID_POINTER;
+
+    if (opening < 0 || closing < 0 || closing < opening)
+        return INVALID_READING;
+
+    *usage = closing - opening;
+
+    return SUCCESS;
+}
+
+double calculateTariff(double usage)
+{
+    if (usage <= 100)
+        return usage * 3;
+    else if (usage <= 200)
+        return 300 + (usage - 100) * 5;
+    else
+        return 800 + (usage - 200) * 7;
+}
+
+double applyConcession(double charge, int eligible)
+{
+    if (eligible == 1)
+        charge = charge - charge * 0.10;
+
+    return charge;
+}
+
+int processReading(int opening, int closing,
+                   int eligible, double *charge, int *reason)
+{
+    double usage, energy;
+    int status;
+
+    if (charge == NULL || reason == NULL)
+        return INVALID_POINTER;
+
+    *charge = 0;
+    *reason = SUCCESS;
+
+    if (eligible != 0 && eligible != 1)
+    {
+        *reason = INVALID_READING;
+        return INVALID_READING;
+    }
+
+    status = calculateUsage(opening, closing, &usage);
+
+    if (status != SUCCESS)
+    {
+        *reason = status;
+        return status;
+    }
+
+    energy = calculateTariff(usage);
+    energy = applyConcession(energy, eligible);
+
+    *charge = energy + 50;
+
+    return SUCCESS;
+}
+
+int main()
+{
+    int opening, closing, eligible;
+    int status, reason;
+    double charge = 0, total = 0;
+
+    printf("Enter opening reading: ");
+    scanf("%d", &opening);
+
+    printf("Enter closing reading: ");
+    scanf("%d", &closing);
+
+    printf("Enter eligibility (1 or 0): ");
+    scanf("%d", &eligible);
+
+    status = processReading(opening, closing,
+                            eligible, &charge, &reason);
+
+    if (status == SUCCESS)
+    {
+        total = total + charge;
+        printf("Bill amount: Rs. %.2f\n", charge);
+    }
+    else
+    {
+        printf("Reading rejected\n");
+        printf("Error code: %d\n", status);
+    }
+
+    printf("Cumulative total: Rs. %.2f", total);
+
+    return 0;
+}
