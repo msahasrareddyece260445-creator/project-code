@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <math.h>
+
+int main()
+{
+    int a, b, c;
+    double d, r1, r2, q;
+    int found = 0;
+    double smallest = 0;
+
+    printf("Enter a, b and c: ");
+    if (scanf("%d%d%d", &a, &b, &c) != 3 ||
+        abs(a) > 50000 || abs(b) > 50000 ||
+        abs(c) > 50000)
+    {
+        printf("Invalid input");
+        return 0;
+    }
+
+    if (a == 0)
+    {
+        if (b == 0)
+        {
+            if (c == 0)
+                printf("Smallest factor = 0");
+            else
+                printf("No solution");
+        }
+        else
+        {
+            r1 = -(double)c / b;
+
+            if (r1 >= 0 && r1 <= 1)
+                printf("Factor = %.4f", r1);
+            else
+                printf("No feasible factor");
+        }
+    }
+    else
+    {
+        d = (double)b * b - 4.0 * a * c;
+
+        if (d < 0)
+        {
+            printf("No real roots");
+            return 0;
+        }
+
+        q = -0.5 * (b + copysign(sqrt(d), b));
+
+        if (q == 0)
+        {
+            r1 = -(double)b / (2.0 * a);
+            r2 = r1;
+        }
+        else
+        {
+            r1 = q / a;
+            r2 = (double)c / q;
+        }
+
+        if (r1 >= 0 && r1 <= 1)
+        {
+            smallest = r1;
+            found = 1;
+        }
+
+        if (r2 >= 0 && r2 <= 1)
+        {
+            if (!found || r2 < smallest)
+                smallest = r2;
+
+            found = 1;
+        }
+
+        if (found)
+            printf("Smallest factor = %.4f", smallest);
+        else
+            printf("No feasible factor");
+    }
+
+    return 0;
+}
