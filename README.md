@@ -8,4 +8,3 @@ ACADEMIC YEAR:2026-27
 
 BRANCH:ECE 1st year 
 
-1)project code 2) project report 3)project ppt
